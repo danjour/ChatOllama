@@ -1,0 +1,2 @@
+27/02 22:41 - user: ola
+27/02 22:41 - response:  "Ola" is a common greeting in Portuguese language, meaning "hello."
