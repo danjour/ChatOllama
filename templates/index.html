@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <meta charset="utf-8">
+      <title>Chat Ollama</title>
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css" rel="stylesheet">
+      <style type="text/css">
+         body{
+         background-color: #f4f7f6;
+         margin-top:20px;
+         }
+         :root {
+         --avatar-size: 2.5rem;
+         }
+         .side-panel {
+         position: relative;
+         background-color: #333;
+         color: white;
+         min-height: 100vh; 
+         width: 250px;
+         position: fixed;
+         z-index: 1;
+         top: 0;
+         left: 0;
+         overflow-x: hidden;
+         padding-top: 20px;
+         }
+         .footer-link {
+         position: absolute;
+         bottom: 0;
+         width: 100%;
+         text-align: left;
+         padding: 10px 0;
+         color: #ffffff; 
+         text-decoration: none;
+         font-size: 14px !important;
+         }
+         .side-panel a {
+         padding: 6px 8px 6px 16px;
+         text-decoration: none;
+         font-size: 25px;
+         color: #818181;
+         display: block;
+         transition: 0.3s;
+         }
+         .circle {
+         background-color: #ccc;
+         border-radius: 50%;
+         height: var(--avatar-size);
+         text-align: center;
+         width: var(--avatar-size);
+         }
+         .initials {
+         font-size: calc(var(--avatar-size) / 2);
+         line-height: 1;
+         position: relative;
+         top: calc(var(--avatar-size) / 4);
+         }
+         .side-panel a:hover {
+         color: #f1f1f1;
+         }
+         .card {
+         background: #fff;
+         transition: .5s;
+         border: 0;
+         margin-bottom: 30px;
+         border-radius: .55rem;
+         position: relative;
+         width: 100%;
+         box-shadow: 0 1px 2px 0 rgb(0 0 0 / 10%);
+         }
+         .message {
+         background-color: #f1f1f1;
+         padding: 10px;
+         margin: 10px 0; 
+         border-radius: 20px; 
+         box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);
+         display: inline-block;
+         max-width: 80%;
+         }
+         .my-message {
+         float: right; 
+         background-color: #d8d8d8;
+         }
+         .response-message {
+         float: left; 
+         background-color: #f1f1f1; /
+         }
+         .clearfix::after {
+         content: "";
+         clear: both;
+         display: table;
+         }
+         .chat-app .chat {
+         margin-left: 280px;
+         border-left: 1px solid #eaeaea
+         }
+         .chat .chat-header {
+         padding: 15px 20px;
+         border-bottom: 2px solid #f4f7f6
+         }
+         .chat .chat-header img {
+         float: left;
+         border-radius: 40px;
+         width: 40px
+         }
+         .chat .chat-header .chat-about {
+         padding-left: 10px
+         }
+         .chat .chat-history {
+         padding: 20px;
+         border-bottom: 2px solid #fff
+         }
+         .chat .chat-history ul {
+         padding: 0
+         }
+         .chat .chat-history ul li {
+         list-style: none;
+         margin-bottom: 30px
+         }
+         .chat .chat-history ul li:last-child {
+         margin-bottom: 0px
+         }
+         .chat .chat-history .message-data {
+         margin-bottom: 15px
+         }
+         .chat .chat-history .message-data img {
+         border-radius: 40px;
+         width: 40px
+         }
+         .chat .chat-history .message-data-time {
+         color: #434651;
+         padding-left: 6px
+         }
+         .chat .chat-history .message {
+         color: #444;
+         padding: 18px 20px;
+         line-height: 26px;
+         font-size: 16px;
+         border-radius: 7px;
+         display: inline-block;
+         position: relative
+         }
+         .chat .chat-history .message:after {
+         bottom: 100%;
+         left: 7%;
+         border: solid transparent;
+         content: " ";
+         height: 0;
+         width: 0;
+         position: absolute;
+         pointer-events: none;
+         border-bottom-color: #fff;
+         border-width: 10px;
+         margin-left: -10px
+         }
+         .chat-history {
+         height: calc(100vh - 239px);
+         overflow-y: auto;
+         margin-bottom: 20px;
+         background-color: #ececec;
+         }
+         .chat .chat-history .my-message {
+         background: #efefef
+         }
+         .chat .chat-history .my-message:after {
+         bottom: 100%;
+         left: 30px;
+         border: solid transparent;
+         content: " ";
+         height: 0;
+         width: 0;
+         position: absolute;
+         pointer-events: none;
+         border-bottom-color: #efefef;
+         border-width: 10px;
+         margin-left: -10px
+         }
+         .chat .chat-history .other-message {
+         background: #e8f1f3;
+         text-align: right
+         }
+         .chat .chat-history .other-message:after {
+         border-bottom-color: #e8f1f3;
+         left: 93%
+         }
+         .chat .chat-message {
+         padding: 20px
+         }
+         .me {
+         margin-right: 2px;
+         font-size: 8px;
+         vertical-align: middle
+         }
+         .me {
+         color: #1d8ecd
+         }
+         .float-right {
+         float: right
+         }
+         .clearfix:after {
+         visibility: hidden;
+         display: block;
+         font-size: 0;
+         content: " ";
+         clear: both;
+         height: 0
+         }
+         @media only screen and (max-width: 767px) {
+         .chat-app .people-list {
+         height: 465px;
+         width: 100%;
+         overflow-x: auto;
+         background: #fff;
+         left: -400px;
+         display: none
+         }
+         .chat-app .people-list.open {
+         left: 0
+         }
+         .chat-app .chat {
+         margin: 0
+         }
+         .chat-app .chat .chat-header {
+         border-radius: 0.55rem 0.55rem 0 0
+         }
+         .chat-app .chat-history {
+         height: 300px;
+         overflow-x: auto
+         }
+         }
+         @media only screen and (min-width: 768px) and (max-width: 992px) {
+         .chat-app .chat-list {
+         height: 650px;
+         overflow-x: auto
+         }
+         .chat-app .chat-history {
+         height: 600px;
+         overflow-x: auto
+         }
+         }
+         @media only screen and (min-device-width: 768px) and (max-device-width: 1024px) and (orientation: landscape) and (-webkit-min-device-pixel-ratio: 1) {
+         .chat-app .chat-list {
+         height: 480px;
+         overflow-x: auto
+         }
+         .chat-app .chat-history {
+         height: calc(100vh - 350px);
+         overflow-x: auto
+         }
+         .main-content {
+         margin-left: 260px;
+         padding: 20px;
+         }
+         @media screen and (max-height: 450px) {
+         .side-panel {padding-top: 15px;}
+         .side-panel a {font-size: 18px;}
+         }
+         .header-content {
+         display: flex;
+         align-items: center;
+         }        footer {
+         width: 100%;
+         padding: 20px 0;
+         position: fixed;
+         bottom: 0;
+         left: 0;
+         background-color: #333;
+         text-align: center;
+         color: white;
+         }
+         }
+      </style>
+   </head>
+   <body>
+      <div class="side-panel">
+         <a href="https://ollama.com/">Ollama</a>
+         <a class="footer-link">{{name}}</a>
+      </div>
+      <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+      <div class="container">
+         <div class="row clearfix">
+            <div class="col-lg-12">
+               <div class="chat">
+                  <div class="chat-header clearfix">
+                     <div class="row">
+                        <div class="col-lg-12">
+                           <a href="javascript:void(0);" data-toggle="modal" data-target="#view_info" class="header-content">
+                              <div class="circle">
+                                 <span class="initials">{{initials}}</span>
+                              </div>
+                           </a>
+                        </div>
+                     </div>
+                  </div>
+                  <div class="chat-history">
+                     <ul class="m-b-0">
+                        {% for message in message_history %}
+                        <li class="clearfix">
+                           {% if message.sender == "user" %}
+                           <div class="message-data text-right">
+                              <span class="message-data-time">{{ message.time }}</span>
+                           </div>
+                           <div class="message my-message float-right">{{ message.text }}</div>
+                           {% elif message.sender == "response" %}
+                           <div class="message-data">
+                              <span class="message-data-time">{{ message.time }}</span>
+                           </div>
+                           <div class="message response-message float-left">{{ message.text }}</div>
+                           {% endif %}
+                        </li>
+                        {% endfor %}
+                     </ul>
+                  </div>
+                  <div class="chat-message clearfix">
+                     <form method="POST" action="{{ url_for('index') }}">
+                        <div class="input-group mb-3">
+                           <input type="text" id="text" name="text" required class="form-control" placeholder="Enter your message here...">
+                           <div class="input-group-append">
+                              <span class="input-group-text" id="sendButton" type="submit" style="cursor:pointer;"><i class="fa fa-send"></i></span>
+                           </div>
+                        </div>
+                     </form>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+      </div>
+      <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.bundle.min.js"></script>
+      <script type="text/javascript"></script>
+   </body>
+</html>
